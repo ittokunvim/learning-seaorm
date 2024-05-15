@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  rust:
+    build: ./
+    volumes:
+      - ./:/app
+      - cargo-cache:/usr/local/cargo/registry
+      - target-cache:/app/target
+    working_dir: /app
+    tty: true
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/bakeries_db
+    depends_on:
+      - postgres
+
+  postgres:
+    image: "postgres:14"
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bakeries_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+volumes:
+  cargo-cache: {}
+  target-cache: {}
+  pgdata: {}
